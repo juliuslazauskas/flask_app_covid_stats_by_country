@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <title>Covid-19 stats</title>
+  </head>
+  <body>
+    <div class="container">
+    <h4>Select Country:</h4>
+    <!--form for country selection, submitted automatically when country is selected -->
+    <form action="/" method="POST" >
+      <select class="form-select" name="country_selected" onchange="this.form.submit()">
+        <option selected disabled>Select a country for stats:</option>
+        <!-- options populated by passing country_list variable in Jinja script-->
+        {% for item in country_list %}
+          <option value="{{ item.0 }}">{{ item.1 }}</option>
+        {% endfor %}
+      </select>
+    </form>
+    </div>
+    <div class="container">
+      <!--if there's a country selected, a canvas object will be shown-->
+      {% if cases %}
+        <canvas id="chart"></canvas>
+      {% endif %}
+    </div>
+    <!-- adding chart JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js" integrity="sha512-zO8oeHCxetPn1Hd9PdDleg5Tw1bAaP0YmNvPY8CwcRyUk7d7/+nyElmFrB6f7vg4f7Fv4sui1mcep8RIEShczg==" crossorigin="anonymous"></script>
+    <script>
+      var ctx = document.getElementById('chart');
+      //data variables are passed and parsed into JavaScript variables for drawing
+      var x_labels = JSON.parse('{{ timeline_cases|tojson if timeline_cases is defined }}');
+      var cases = JSON.parse('{{ cases|tojson if cases is defined }}');
+      var deaths = JSON.parse('{{ deaths|tojson if deaths is defined }}');
+      // chart drawing is created
+      var myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+              labels: x_labels,
+              datasets: [{
+                  label: '{{ country }} cases',
+                  yAxisID: 'a',
+                  data: cases,
+                  fill : 'false',
+                  backgroundColor : 'red',
+                  borderColor : 'red',
+              },
+              {
+                  label: "{{ country }} deaths",
+                  yAxisID: 'b',
+                  data: deaths,
+                  fill : 'false',
+                  backgroundColor : 'blue',
+                  borderColor : 'blue',                
+              }]
+          },
+          options: {
+              scales: {
+                yAxes: [{
+                      id: 'a',
+                      position: 'left',
+                      scaleLabel: {display: 'true', labelString: '{{ country }} cases', fontSize: 20},
+                  },{
+                      id: 'b',
+                      position: 'right',
+                      scaleLabel: {display: 'true', labelString: '{{ country }} deaths', fontSize: 20},
+                      ticks: {
+                          beginAtZero: true
+                      }
+                  }]
+              }
+          }
+      });
+
+
+    </script>
+  </body>
+</html>
