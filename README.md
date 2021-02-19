@@ -3,3 +3,4 @@ Flask app that pulls Covid 19 stats json from opendata.ecdc.europa.eu and displa
 
 JavaScript chart by ChartJS: https://www.chartjs.org/
 app mvc by Python microframework Flask: https://flask.palletsprojects.com/en/1.1.x/
+HTML/CSS elements by Botstrap: https://getbootstrap.com/
